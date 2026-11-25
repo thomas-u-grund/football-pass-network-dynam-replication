@@ -1,0 +1,7 @@
+# third-party data (download yourself, see README Section 3)
+data/*
+!data/README.txt
+# files created by the do-files
+output/
+*.log
+.DS_Store
