@@ -1,13 +1,12 @@
 *==============================================================================
-* 0_install.do   Install nwcommands (core) and nwdynam from GitHub
+* 0_install.do   Install nwcommands (core) and nwdynam
 *
 * Paper: "Fitting dynamic network actor models to thousands of team-matches: pass frequency
 *         and receiver choice across match contexts in European football"
 *
 * The estimates in the paper were made with nwcommands 3.26.0 and nwdynam 1.9.1. This file installs
-* the current release of nwcommands (nwcommands.org) and the tagged release RELEASE of nwdynam (global NWDYNAM_RELEASE,
-* default v1.9.1; if that tag cannot be installed, the current release is installed instead). Later
-* releases (nwcommands 3.35.0, nwdynam 1.11.1) gave identical estimates in the checks made.
+* the current releases of both. Later releases (nwcommands 3.35.0, nwdynam 1.11.1) gave the same
+* estimates in the checks made, apart from the unstable team-matches described in the README.
 * If you use this file, leave NWDIR unset when you run 2_fit.do (the packages are then taken from the
 * Stata ado path). Requires Stata 17 or later and an internet connection.
 *
@@ -17,19 +16,13 @@
 *==============================================================================
 version 17
 set more off
-global NWDYNAM_RELEASE : environment NWDYNAM_RELEASE
-if "$NWDYNAM_RELEASE" == "" global NWDYNAM_RELEASE "v1.9.1"
 
 * 1. core package (the models need it); route as on https://nwcommands.org/nwcommands/install/
 net install nwcommands, from("https://nwcommands.org/net/") replace
 nwinstall, all nogui
 
-* 2. nwdynam: tagged release, else the current release (https://nwcommands.org/nwdynam/install/)
-capture noisily net install nwdynam, from("https://raw.githubusercontent.com/thomas-u-grund/nwdynam/$NWDYNAM_RELEASE/") replace
-if _rc {
-    display as text "release $NWDYNAM_RELEASE not available; installing the current release of nwdynam"
-    net install nwdynam, from("https://raw.githubusercontent.com/thomas-u-grund/nwdynam/main/") replace
-}
+* 2. nwdynam, installed through the core (https://nwcommands.org/nwdynam/install/)
+nwinstall, modelpkg(nwdynam)
 
 * 3. check and record the versions
 capture which nwdynam

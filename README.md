@@ -22,7 +22,7 @@ stored/     the estimates and tables of the paper, for comparison with your own 
 ## 2. Requirements
 
 - Stata 19.5 MP (StataNow); the code uses version 17 syntax. The parallel fit in `2_fit.do` and the unpacking of two `.csv.gz` files use Unix commands (Mac or Linux); on Windows set `global PARALLEL 0` before running `2_fit.do` and unpack `data/tm/players.csv.gz` and `data/tm/transfers.csv.gz` by hand into `output/build/tmp`. The TIF export of the figures uses the macOS tool `sips`; elsewhere the PNG and EPS files are still written.
-- The Stata packages `nwcommands` and `nwdynam`, installed by `stata/0_install.do` (`net install nwcommands, from(https://nwcommands.org/net/) replace`, `nwinstall, all`, then nwdynam v1.9.1 from its GitHub release; see https://nwcommands.org/nwdynam/install/). If you install this way, leave `NWDIR` unset. The estimates in the paper were made with nwcommands 3.26.0 and nwdynam 1.9.1; later versions (nwdynam 1.11.1, nwcommands 3.35.0) gave identical estimates for the test case. 
+- The Stata packages `nwcommands` and `nwdynam`, installed by `stata/0_install.do` (`net install nwcommands, from(https://nwcommands.org/net/) replace`, `nwinstall, all nogui`, `nwinstall, modelpkg(nwdynam)`, which install the current releases; see https://nwcommands.org/nwdynam/install/). If you install this way, leave `NWDIR` unset. The estimates in the paper were made with nwcommands 3.26.0 and nwdynam 1.9.1; later versions (nwdynam 1.11.1, nwcommands 3.35.0) gave the same estimates (see Section 6). 
 - About 3 GB of disk space for the data and the built files.
 
 ## 3. Data to obtain and where to put it

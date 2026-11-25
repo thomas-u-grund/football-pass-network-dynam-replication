@@ -37,7 +37,7 @@
 *     Default set = all of these.  loose, t5, acc exist for England only.
 *
 * nwcommands/nwdynam: the paper's estimates used nwdynam 1.9.1 with nwcommands 3.26.0 (0_install.do
-* installs nwdynam 1.9.1 by default). NWDIR is optional: if set, it must contain the folders nwcommands/
+* installs the current releases). NWDIR is optional: if set, it must contain the folders nwcommands/
 * and nwdynam/ and is used instead of the installed packages. Newer releases (nwdynam 1.11.1) gave
 * the same estimates in the checks made, apart from the unstable team-matches described in the README.
 * NWDIR/versions are recorded in OUT/versions.txt.  Parallel runs need a Unix-like Stata (Mac/Linux);
