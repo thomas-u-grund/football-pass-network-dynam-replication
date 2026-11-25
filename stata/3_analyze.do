@@ -13,7 +13,7 @@
 *   output/fit/ ev_<league>, act_<league>, act_<league>_prior (csv)   (stage 2)
 *   output/fit/est_<league>_<tag>.csv                                 (team-match nwdynam fits)
 *   output/fit/variants/prior_<variant>/est_<league>_VP.csv           (variant fits)
-*   data/raw/matches/matches_<league>.json                            (final scores; only for Table S7)
+*   data/raw/matches/matches_<league>.json                            (final scores; only for Table S11)
 *   To reuse the stored estimates instead of fitting, copy stored/estimates/ into output/fit/.
 *
 * Outputs: $OUT = <root>/output/analyze/ : one CSV per paper table, Figure1/2
@@ -22,7 +22,7 @@
 * Usage:  stata-mp -b do 3_analyze.do                  (all blocks)
 *         stata-mp -b do 3_analyze.do pool moderators  (only the named blocks)
 *   blocks: desc rate observed geometry outcome clogit pool moderators figures simplectx
-*   Block "simplectx" (Table S11) needs only the variant estimates of 2_fit.do (tags VP_base, VP_simple).
+*   Block "simplectx" (Table S10) needs only the variant estimates of 2_fit.do (tags VP_base, VP_simple).
 *   Block "figures" and block "moderators" reload results of "rate", "observed",
 *   "pool" from $OUT/tmp, so run those first (the default run does everything).
 * Root folder: environment variable PACK_ROOT, else the default path below.
@@ -144,7 +144,7 @@ void pr_dump()
 //     cycles between two values);
 //   - NOTE: after the loop the coefficients beta are those of the LAST PASS
 //     (weights with the tau2 of the previous pass), while the weights w, the bread A and the clustered
-//     variance use the final tau2.  Table S5 has this feature.
+//     variance use the final tau2.  Table S8 has this feature.
 // Returns the last m coefficients and SEs.
 void mreg(real colvector y, real colvector s, real matrix X, real colvector cl, real scalar m,
           real colvector bm, real colvector sem, real scalar tau2)
@@ -261,7 +261,7 @@ save "$TMP/act_all.dta", replace
 * 2. POOLING OF THE TEAM-MATCH ESTIMATES
 *    Random-effects (DerSimonian-Laird) pooling, club-clustered variance eq. (3).
 *    Feeds: Table 5 (J, JP), Table 7 (J JP R RP V U), Table 8 (variants prior_base/prior_simple),
-*    Supplementary Tables S1 (X XP B BP), S2 (England recipient rules), S10 (JS).
+*    Supplementary Tables S1 (X XP B BP), S9 (England recipient rules), S2 (JS).
 *==============================================================================
 * load est files (list of quoted paths): keep the successful fits used by the pooling scripts
 program define load_est
@@ -302,11 +302,11 @@ if $RUN_pool {
         load_est `fl'
         mata: pool_spec("T8_`v'", "`t9'")
     }
-    * Supplementary Table S2: England, recipient rules (baseline = next event)
+    * Supplementary Table S9: England, recipient rules (baseline = next event)
     foreach v in base loose t5 acc {
         if "`v'"=="base" load_est "$V/prior_base_England/est_England_VP.csv"
         else             load_est "$V/prior_`v'/est_England_VP.csv"
-        mata: pool_spec("S2_`v'", "")
+        mata: pool_spec("S9_`v'", "")
     }
     clear
     mata: pr_dump()
@@ -320,8 +320,8 @@ if $RUN_pool {
 
     * ---- paper tables (one CSV each) ----
     foreach x in "Table5_pooled_choice_effects|J JP" "Table8_robustness_specs|J JP R RP V U" ///
-                 "TableS1_tenure_specs|X XP B BP" "TableS10_strict_fallback|JS" ///
-                 "Table9_recipient_pass_type|T8_base T8_simple" "TableS2_recipient_rules|S2_base S2_loose S2_t5 S2_acc" {
+                 "TableS1_tenure_specs|X XP B BP" "TableS2_strict_fallback|JS" ///
+                 "Table9_recipient_pass_type|T8_base T8_simple" "TableS9_recipient_rules|S9_base S9_loose S9_t5 S9_acc" {
         local fn = substr("`x'",1,strpos("`x'","|")-1)
         local sp = substr("`x'",strpos("`x'","|")+1,.)
         use "$TMP/pooled.dta", clear
@@ -340,7 +340,7 @@ if $RUN_pool {
 * 4. PASS FREQUENCY: PIECEWISE POISSON RATE MODELS WITH PLAYER-TIME EXPOSURE
 *    Interval = one team-match with constant set of players on the pitch, constant score state and
 *    constant clock band.  Poisson with exposure, club-clustered errors.
-*    Feeds: Table 3 (venue / strength), Table 4 (score and clock), Supp. Tables S3, S4.
+*    Feeds: Table 3 (venue / strength), Table 4 (score and clock), Supp. Tables S5, S6.
 *==============================================================================
 mata:
 // build the intervals.  ACT=(match,team,t_join,t_leave) sorted by match,team;
@@ -546,7 +546,7 @@ if $RUN_rate {
     save "$TMP/rate_res.dta", replace
     export delimited using "$OUT/rate_poisson_all.csv", replace
     foreach x in "Table3_frequency_venue_strength|A A2" "Table4_frequency_score_clock|B B_noscore" ///
-                 "TableS3_frequency_squad_value|A3 A4" "TableS4_frequency_by_league|by_England by_Spain by_Italy by_Germany by_France" {
+                 "TableS5_frequency_squad_value|A3 A4" "TableS6_frequency_by_league|by_England by_Spain by_Italy by_Germany by_France" {
         local fn = substr("`x'",1,strpos("`x'","|")-1)
         local sp = substr("`x'",strpos("`x'","|")+1,.)
         use "$TMP/rate_res.dta", clear
@@ -563,7 +563,7 @@ if $RUN_rate {
 * 3. SECOND-STAGE (META-)REGRESSIONS ON CONTEXT
 *    Team-match estimates regressed on team strength (ppg), squad value, home, opponent strength,
 *    DL random-effects weights, league fixed effects, club-clustered variance.
-*    Feeds: Supplementary Table S5 (tag JP), Benjamini-Hochberg count, club-FE meta-regression.
+*    Feeds: Supplementary Table S8 (tag JP), Benjamini-Hochberg count, club-FE meta-regression.
 *==============================================================================
 mata:
 // one second-stage regression for one term.  data in memory: term b se team lgn z_team z_val home z_opp
@@ -641,12 +641,12 @@ if $RUN_moderators {
     }
     postclose `pf'
     use `fe', clear
-    export delimited using "$OUT/TableS5b_metareg_club_fe.csv", replace
+    export delimited using "$OUT/TableS8b_metareg_club_fe.csv", replace
 
     use `modres', clear
     gen double z = b/se
     save "$TMP/modres.dta", replace
-    export delimited using "$OUT/TableS5_moderators.csv", replace
+    export delimited using "$OUT/TableS8_moderators.csv", replace
 
     * ---- Benjamini-Hochberg over all tests (strength model, tag JP, plus 3 frequency tests)
     keep if tag=="JP" & model=="strength"
@@ -679,7 +679,7 @@ if $RUN_moderators {
     gen int n_tests = `m'
     gen int n_bh_significant = `thr'
     gen int n_bonferroni = `bonf'
-    export delimited using "$OUT/TableS5c_benjamini_hochberg.csv", replace
+    export delimited using "$OUT/TableS8c_benjamini_hochberg.csv", replace
 }
 *==============================================================================
 * 2b. DESCRIPTIVE STATISTICS
@@ -913,7 +913,7 @@ if $RUN_observed {
 * 6. DIRECT PASS GEOMETRY BY VENUE, OPPONENT, SCORE STATE AND CLOCK
 *    Pass-level OLS (pass length, forward displacement, 0-100 pitch scale) with club fixed effects
 *    (within transformation), club-clustered SEs with the factor G/(G-1) only.
-*    Feeds: Supplementary Table S6.
+*    Feeds: Supplementary Table S7.
 *==============================================================================
 mata:
 // YX = (y1, y2, X(12 columns)), cl = club id (any real).  Within-club OLS, clustered variance G/(G-1).
@@ -1023,14 +1023,14 @@ if $RUN_geometry {
     gen long n_passes = `npass'
     gen double mean_y = cond(outcome=="length", `m_length', `m_fwd')
     save "$TMP/geom_res.dta", replace
-    export delimited using "$OUT/TableS6_pass_geometry.csv", replace
+    export delimited using "$OUT/TableS7_pass_geometry.csv", replace
 }
 *==============================================================================
 * 7. TEMPO AND GOAL DIFFERENCE
 *    Tempo = log(pass attempts / (players on the pitch x seconds)) in a window, standardised.
 *    Outcome: final goal difference (official score from raw/matches/matches_<league>.json);
 *    club fixed effects, home, opponent strength; club-clustered SEs.
-*    Feeds: Supplementary Table S7.
+*    Feeds: Supplementary Table S11.
 *==============================================================================
 mata:
 // total player-time and number of passes in window [a,b) of one team-match
@@ -1225,7 +1225,7 @@ if $RUN_outcome {
     use `res', clear
     gen double z = b/se
     save "$TMP/outcome_res.dta", replace
-    export delimited using "$OUT/TableS7_tempo_goal_difference.csv", replace
+    export delimited using "$OUT/TableS11_tempo_goal_difference.csv", replace
 }
 *==============================================================================
 * 8. ONE-STAGE CONDITIONAL LOGIT WITH CONTEXT INTERACTIONS
@@ -1235,7 +1235,7 @@ if $RUN_outcome {
 *    drop out of the conditional logit).  Newton-Raphson on the conditional likelihood, club-clustered
 *    sandwich variance C/(C-1) (identical to clogit, vce(cluster club)); predicted shares under
 *    counterfactual contexts by the delta method.
-*    Feeds: Supplementary Tables S8 (coefficients) and S9 (predicted shares and contrasts).
+*    Feeds: Supplementary Tables S3 (coefficients) and S4 (predicted shares and contrasts).
 *    (Implemented in Mata, because the 1.3 million
 *     choice sets with up to 16 alternatives would need ~14 million long-format rows for clogit.)
 *==============================================================================
@@ -1538,7 +1538,7 @@ program define run_clogit
     gen double clubs   = CL_INFO[1,4]
     gen double loglik  = CL_INFO[1,5]
     gen double loglik_null = CL_INFO[1,6]
-    export delimited using "$OUT/TableS8_conditional_logit_coef`sfx'.csv", replace
+    export delimited using "$OUT/TableS3_conditional_logit_coef`sfx'.csv", replace
     save "$TMP/clogit_coef`sfx'.dta", replace
     * ---- predicted levels and contrasts ----
     clear
@@ -1575,7 +1575,7 @@ program define run_clogit
         replace depth_pts = 10*CL_CON[`k',5] in `r'
         replace depth_se  = 10*CL_CON[`k',6] in `r'
     }
-    export delimited using "$OUT/TableS9_conditional_logit_predicted`sfx'.csv", replace
+    export delimited using "$OUT/TableS4_conditional_logit_predicted`sfx'.csv", replace
     save "$TMP/clogit_pred`sfx'.dta", replace
 end
 
@@ -1759,8 +1759,8 @@ if $RUN_figures {
 
 
 *==============================================================================
-* 4. CONTEXT CONTRASTS FOR SIMPLE PASSES ONLY  (Supplementary Table S11)
-*    Same second-stage regressions as Table S5 (strength model, league fixed effects, club-clustered
+* 4. CONTEXT CONTRASTS FOR SIMPLE PASSES ONLY  (Supplementary Table S10)
+*    Same second-stage regressions as Table S8 (strength model, league fixed effects, club-clustered
 *    variance), on team-match estimates from the model without tenure terms, earlier-match positions,
 *    fitted to all passes with a receiver (VP_base) and to simple passes only (VP_simple).
 *==============================================================================
@@ -1790,7 +1790,7 @@ if $RUN_simplectx {
     postclose `ps'
     use `sres', clear
     gen double z = b/se
-    export delimited using "$OUT/TableS11_simple_pass_moderators.csv", replace
+    export delimited using "$OUT/TableS10_simple_pass_moderators.csv", replace
     list, sepby(term) noobs
 }
 

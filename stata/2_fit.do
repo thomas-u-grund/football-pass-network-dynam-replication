@@ -32,8 +32,8 @@
 *   global STATA_EXE     "..."           [stata binary of the running flavor]
 *
 *   Jobs (TAGS): J U V R X B (match positions), JP XP BP RP (earlier-match positions),
-*     JS (strict fallback, Table S10), V_simple V_base V_loose V_t5 V_acc (tag V),
-*     VP_simple VP_base VP_loose VP_t5 VP_acc (tag VP; Table 9, Table S2).
+*     JS (strict fallback, Table S2), V_simple V_base V_loose V_t5 V_acc (tag V),
+*     VP_simple VP_base VP_loose VP_t5 VP_acc (tag VP; Table 9, Table S9).
 *     Default set = all of these.  loose, t5, acc exist for England only.
 *
 * nwcommands/nwdynam: the paper's estimates used nwdynam 1.9.1 with nwcommands 3.26.0 (0_install.do

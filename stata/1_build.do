@@ -17,8 +17,8 @@
 * Which paper results use which file (see README, Section 5): passes_* feed every pass-network and
 * frequency analysis (Tables 1-9, S2-S11, Figure 2); nodes/dyads feed the tenure networks, positions and
 * descriptives (Tables 1, 2, 5, 8, S1); fifa_overall the rating covariate (Tables 5, 8); goals the
-* goal-state files (Tables 3, 4, S7-S9); team_cov / match_cov the club covariates and home/away of the
-* meta-regressions (Tables 3-5, S5).
+* goal-state files (Tables 3, 4, S3, S4, S11); team_cov / match_cov the club covariates and home/away of the
+* meta-regressions (Tables 3-5, S8).
 *
 * Usage:   run from the stata/ folder (or set the environment variable PACK_ROOT to the pack folder):
 *          stata-mp -b do 1_build.do                        (about 2 minutes)
@@ -1205,7 +1205,7 @@ export delimited match team i j shared_tenure_days shared_src coapp_prior same_r
 * 10. CLUB COVARIATES  -> team_cov.csv, match_cov.csv
 *     team_cov: points and goal difference per game (5 leagues), mean log market value / log wage / FIFA
 *     overall of the 14 players with most minutes (>= 8 rated), used as club-level covariates in the
-*     meta-regressions (Tables 3-5, S5). match_cov: home/away side and opponent of every team-match.
+*     meta-regressions (Tables 3-5, S8). match_cov: home/away side and opponent of every team-match.
 *==============================================================================
 * FIFA covariates per Wyscout player: edition 18 preferred, then 17, then 19; rows with unreadable overall skipped
 use `"$tmp/fifa_all.dta"', clear
